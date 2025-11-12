@@ -30,7 +30,7 @@ dev = [
 
 [project.scripts]
 mcp-theanswer = "mcp_theanswer.main:main"
-mcp-theanswer-server = "mcp_theanswer.server:main"
+mcp-theanswer-server = "mcp_theanswer.server:run"
 
 [build-system]
 requires = ["hatchling"]
