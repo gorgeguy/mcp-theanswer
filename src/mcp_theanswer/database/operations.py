@@ -54,7 +54,10 @@ def _get_or_create_tag(conn: sqlite3.Connection, tag_name: str) -> int:
 
     # Create new tag
     cursor = conn.execute("INSERT INTO tags (name) VALUES (?)", (tag_name,))
-    return cursor.lastrowid
+    tag_id = cursor.lastrowid
+    if tag_id is None:
+        raise RuntimeError(f"Failed to create tag: {tag_name}")
+    return tag_id
 
 
 def _get_tags_for_quote(conn: sqlite3.Connection, quote_id: int) -> list[str]:

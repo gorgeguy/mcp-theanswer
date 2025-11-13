@@ -98,43 +98,43 @@ async def get_resource_list() -> list[Resource]:
     """
     return [
         Resource(
-            uri="quote://all",
+            uri="quote://all",  # type: ignore[arg-type]
             name="All Quotes",
             description="Returns all quotes in the vault",
             mimeType="application/json",
         ),
         Resource(
-            uri="quote://id/{id}",
+            uri="quote://id/{id}",  # type: ignore[arg-type]
             name="Quote by ID",
             description="Returns a specific quote by ID",
             mimeType="application/json",
         ),
         Resource(
-            uri="quote://author/{author}",
+            uri="quote://author/{author}",  # type: ignore[arg-type]
             name="Quotes by Author",
             description="Returns all quotes by a specific author",
             mimeType="application/json",
         ),
         Resource(
-            uri="quote://tag/{tag}",
+            uri="quote://tag/{tag}",  # type: ignore[arg-type]
             name="Quotes by Tag",
             description="Returns all quotes with a specific tag",
             mimeType="application/json",
         ),
         Resource(
-            uri="quote://random",
+            uri="quote://random",  # type: ignore[arg-type]
             name="Random Quote",
             description="Returns a random quote from the collection",
             mimeType="application/json",
         ),
         Resource(
-            uri="quote://stats",
+            uri="quote://stats",  # type: ignore[arg-type]
             name="Collection Statistics",
             description="Returns statistics about the quote collection",
             mimeType="application/json",
         ),
         Resource(
-            uri="quote://tags",
+            uri="quote://tags",  # type: ignore[arg-type]
             name="All Tags",
             description="Returns all available tags with counts",
             mimeType="application/json",
@@ -231,6 +231,6 @@ def register_resources(server: Server, db_path: Path) -> None:
         return await get_resource_list()
 
     @server.read_resource()
-    async def read_resource(uri: str) -> str:
+    async def read_resource(uri: str) -> str:  # type: ignore[arg-type]
         """Read a resource by URI."""
         return await read_resource_content(uri, db_path)
