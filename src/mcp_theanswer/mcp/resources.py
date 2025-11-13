@@ -156,17 +156,19 @@ async def read_resource_content(uri: str, db_path: Path) -> str:
     Raises:
         ValueError: If URI is invalid or resource not found
     """
-    logger.info(f"Resource requested: {uri}")
+    # Convert AnyUrl to string if needed
+    uri_str = str(uri)
+    logger.info(f"Resource requested: {uri_str}")
 
     # Handle quote://all
-    if uri == "quote://all":
+    if uri_str == "quote://all":
         quotes = get_all_quotes(db_path)
         data = [_quote_to_dict(q) for q in quotes]
         return json.dumps(data, indent=2)
 
     # Handle quote://id/{id}
-    if uri.startswith("quote://id/"):
-        quote_id_str = uri[len("quote://id/") :]
+    if uri_str.startswith("quote://id/"):
+        quote_id_str = uri_str[len("quote://id/") :]
         try:
             quote_id = int(quote_id_str)
         except ValueError as e:
@@ -179,39 +181,39 @@ async def read_resource_content(uri: str, db_path: Path) -> str:
         return json.dumps(_quote_to_dict(quote), indent=2)
 
     # Handle quote://author/{author}
-    if uri.startswith("quote://author/"):
-        author = unquote(uri[len("quote://author/") :])
+    if uri_str.startswith("quote://author/"):
+        author = unquote(uri_str[len("quote://author/") :])
         quotes = search_quotes(db_path, author=author)
         data = [_quote_to_dict(q) for q in quotes]
         return json.dumps(data, indent=2)
 
     # Handle quote://tag/{tag}
-    if uri.startswith("quote://tag/"):
-        tag = unquote(uri[len("quote://tag/") :])
+    if uri_str.startswith("quote://tag/"):
+        tag = unquote(uri_str[len("quote://tag/") :])
         quotes = search_quotes(db_path, tags=[tag])
         data = [_quote_to_dict(q) for q in quotes]
         return json.dumps(data, indent=2)
 
     # Handle quote://random
-    if uri == "quote://random":
+    if uri_str == "quote://random":
         quote = get_random_quote(db_path)
         if not quote:
             return json.dumps({"error": "No quotes available"}, indent=2)
         return json.dumps(_quote_to_dict(quote), indent=2)
 
     # Handle quote://stats
-    if uri == "quote://stats":
+    if uri_str == "quote://stats":
         stats = _get_stats(db_path)
         return json.dumps(stats, indent=2)
 
     # Handle quote://tags
-    if uri == "quote://tags":
+    if uri_str == "quote://tags":
         tags = list_all_tags(db_path)
         data = [{"name": name, "count": count} for name, count in tags]
         return json.dumps(data, indent=2)
 
     # Unknown resource
-    raise ValueError(f"Unknown resource URI: {uri}")
+    raise ValueError(f"Unknown resource URI: {uri_str}")
 
 
 def register_resources(server: Server, db_path: Path) -> None:
