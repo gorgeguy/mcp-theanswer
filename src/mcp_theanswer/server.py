@@ -9,6 +9,7 @@ from mcp.server.stdio import stdio_server
 
 from mcp_theanswer.config import get_auto_seed, get_database_path, get_log_level
 from mcp_theanswer.database.schema import check_if_seeded, init_database
+from mcp_theanswer.mcp.tools import register_tools
 from mcp_theanswer.seed_data import seed_database
 
 # Configure logging
@@ -87,7 +88,10 @@ async def main() -> None:
 
     logger.info(f"Server initialized with database at {db_path}")
 
-    # TODO: Register tools (Phase 6)
+    # Register tools (Phase 6)
+    register_tools(server, db_path)
+    logger.info("Tools registered")
+
     # TODO: Register resources (Phase 7)
     # TODO: Register prompts (Phase 8)
 
