@@ -9,6 +9,7 @@ from mcp.server.stdio import stdio_server
 
 from mcp_theanswer.config import get_auto_seed, get_database_path, get_log_level
 from mcp_theanswer.database.schema import check_if_seeded, init_database
+from mcp_theanswer.mcp.prompts import register_prompts
 from mcp_theanswer.mcp.resources import register_resources
 from mcp_theanswer.mcp.tools import register_tools
 from mcp_theanswer.seed_data import seed_database
@@ -97,7 +98,9 @@ async def main() -> None:
     register_resources(server, db_path)
     logger.info("Resources registered")
 
-    # TODO: Register prompts (Phase 8)
+    # Register prompts (Phase 8)
+    register_prompts(server)
+    logger.info("Prompts registered")
 
     # Run the server using stdio transport
     logger.info("Quote Vault MCP Server is ready")
