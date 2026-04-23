@@ -148,3 +148,7 @@ cython_debug/
 # uv
 .uv/
 uv.lock
+
+# Dolt database files (added by bd init)
+.dolt/
+*.db

@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "server",
+  "dolt_database": "mcp_theanswer",
+  "project_id": "507526a4-11ea-471e-be42-1945740b8e5c"
+}
