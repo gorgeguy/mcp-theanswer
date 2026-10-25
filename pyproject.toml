@@ -3,7 +3,7 @@ name = "mcp-theanswer"
 version = "0.1.0"
 description = "A Python project with modern tooling and best practices"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.14.9,<3.15"
 authors = [
     { name = "Your Name", email = "your.email@example.com" }
 ]
@@ -11,21 +11,20 @@ classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
-    "mcp>=1.21.0",
+    "mcp>=2.3.0",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=8.0.0",
-    "pytest-cov>=4.1.0",
-    "pytest-mock>=3.12.0",
-    "ruff>=0.8.0",
-    "pyright>=1.1.0",
-    "pre-commit>=3.5.0",
+    "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
+    "pytest-mock>=3.17.0",
+    "ruff>=0.17.2",
+    "pyright>=1.1.414",
+    "pre-commit>=4.7.0",
 ]
 
 [project.scripts]
@@ -41,7 +40,7 @@ packages = ["src/mcp_theanswer"]
 
 [tool.ruff]
 line-length = 100
-target-version = "py311"
+target-version = "py314"
 src = ["src", "tests"]
 
 [tool.ruff.lint]
@@ -88,6 +87,8 @@ addopts = [
 ]
 
 [tool.pyright]
+venvPath = "."
+venv = ".venv"
 include = ["src", "tests"]
 exclude = [
     "**/__pycache__",
@@ -95,7 +96,7 @@ exclude = [
     "build",
     "dist",
 ]
-pythonVersion = "3.11"
+pythonVersion = "3.14"
 typeCheckingMode = "standard"
 reportMissingImports = true
 reportMissingTypeStubs = false
@@ -116,11 +117,11 @@ exclude_lines = [
 
 [dependency-groups]
 dev = [
-    "pre-commit>=4.3.0",
-    "pyright>=1.1.407",
-    "pytest>=8.4.2",
-    "pytest-asyncio>=1.3.0",
-    "pytest-cov>=7.0.0",
-    "pytest-mock>=3.15.1",
-    "ruff>=0.14.2",
+    "pre-commit>=4.7.0",
+    "pyright>=1.1.414",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "pytest-cov>=7.1.0",
+    "pytest-mock>=3.17.0",
+    "ruff>=0.17.2",
 ]

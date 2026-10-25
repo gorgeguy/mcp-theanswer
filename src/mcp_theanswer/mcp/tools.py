@@ -1,10 +1,9 @@
 """MCP tool implementations for Quote Vault."""
 
 import logging
-from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from mcp.server import Server
+from mcp import types as mcp_types
 from mcp.types import Tool
 
 from mcp_theanswer.database.operations import (
@@ -32,6 +31,11 @@ from mcp_theanswer.database.operations import (
     update_quote as db_update_quote,
 )
 
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from mcp.server import Server
+
 logger = logging.getLogger("quote-vault")
 
 
@@ -44,7 +48,6 @@ def register_tools(server: Server, db_path: Path) -> None:
         db_path: Path to the database file
     """
 
-    @server.call_tool()
     async def call_tool(name: str, arguments: dict[str, Any]) -> list[Any]:
         """Handle tool calls."""
         logger.info(f"Tool called: {name} with arguments: {arguments}")
@@ -70,14 +73,13 @@ def register_tools(server: Server, db_path: Path) -> None:
             logger.error(f"Error executing tool {name}: {e}", exc_info=True)
             raise
 
-    @server.list_tools()
     async def list_tools() -> list[Tool]:
         """List all available tools."""
         return [
             Tool(
                 name="add_quote",
                 description="Add a new quote to the vault",
-                inputSchema={
+                input_schema={
                     "type": "object",
                     "properties": {
                         "text": {"type": "string", "description": "The quote text"},
@@ -99,7 +101,7 @@ def register_tools(server: Server, db_path: Path) -> None:
             Tool(
                 name="search_quotes",
                 description="Search for quotes using substring matching",
-                inputSchema={
+                input_schema={
                     "type": "object",
                     "properties": {
                         "query": {
@@ -118,7 +120,7 @@ def register_tools(server: Server, db_path: Path) -> None:
             Tool(
                 name="random_quote",
                 description="Get a random quote, optionally filtered by tag",
-                inputSchema={
+                input_schema={
                     "type": "object",
                     "properties": {"tag": {"type": "string", "description": "Optional tag filter"}},
                 },
@@ -126,7 +128,7 @@ def register_tools(server: Server, db_path: Path) -> None:
             Tool(
                 name="update_quote",
                 description="Update an existing quote",
-                inputSchema={
+                input_schema={
                     "type": "object",
                     "properties": {
                         "id": {"type": "integer", "description": "Quote ID"},
@@ -146,7 +148,7 @@ def register_tools(server: Server, db_path: Path) -> None:
             Tool(
                 name="delete_quote",
                 description="Delete a quote by ID",
-                inputSchema={
+                input_schema={
                     "type": "object",
                     "properties": {"id": {"type": "integer", "description": "Quote ID"}},
                     "required": ["id"],
@@ -155,7 +157,7 @@ def register_tools(server: Server, db_path: Path) -> None:
             Tool(
                 name="add_tag_to_quote",
                 description="Add a tag to an existing quote",
-                inputSchema={
+                input_schema={
                     "type": "object",
                     "properties": {
                         "quote_id": {"type": "integer", "description": "Quote ID"},
@@ -167,9 +169,20 @@ def register_tools(server: Server, db_path: Path) -> None:
             Tool(
                 name="list_tags",
                 description="List all unique tags in the system with usage counts",
-                inputSchema={"type": "object", "properties": {}},
+                input_schema={"type": "object", "properties": {}},
             ),
         ]
+
+    async def on_list_tools(_ctx: Any, _params: mcp_types.PaginatedRequestParams):
+        return mcp_types.ListToolsResult(tools=await list_tools())
+
+    async def on_call_tool(_ctx: Any, params: mcp_types.CallToolRequestParams):
+        return mcp_types.CallToolResult(
+            content=await call_tool(params.name, params.arguments or {})
+        )
+
+    server.add_request_handler("tools/list", mcp_types.PaginatedRequestParams, on_list_tools)
+    server.add_request_handler("tools/call", mcp_types.CallToolRequestParams, on_call_tool)
 
 
 async def handle_add_quote(db_path: Path, arguments: dict[str, Any]) -> list[Any]:

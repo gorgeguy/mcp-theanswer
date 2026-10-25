@@ -1,7 +1,10 @@
 """Database schema and initialization."""
 
 import sqlite3
-from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 # Schema version for future migrations
 SCHEMA_VERSION = 1

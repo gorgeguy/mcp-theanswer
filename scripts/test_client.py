@@ -113,8 +113,8 @@ async def list_tools(session: ClientSession) -> None:
         for tool in result.tools:
             print(f"  {tool.name}")
             print(f"    Description: {tool.description}")
-            if tool.inputSchema:
-                print(f"    Input Schema: {json.dumps(tool.inputSchema, indent=6)}")
+            if tool.input_schema:
+                print(f"    Input Schema: {json.dumps(tool.input_schema, indent=6)}")
             print()
     except Exception as e:
         print(f"Error listing tools: {e}", file=sys.stderr)
@@ -135,7 +135,7 @@ async def list_resources(session: ClientSession) -> None:
             print(f"  {resource.uri}")
             print(f"    Name: {resource.name}")
             print(f"    Description: {resource.description}")
-            print(f"    MIME Type: {resource.mimeType}")
+            print(f"    MIME Type: {resource.mime_type}")
             print()
     except Exception as e:
         print(f"Error listing resources: {e}", file=sys.stderr)

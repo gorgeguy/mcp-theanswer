@@ -127,7 +127,7 @@ async def test_should_list_all_resources() -> None:
 
     # Check all have JSON mime type
     for resource in resources:
-        assert resource.mimeType == "application/json"
+        assert resource.mime_type == "application/json"
 
 
 @pytest.mark.asyncio

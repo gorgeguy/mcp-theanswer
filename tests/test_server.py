@@ -104,8 +104,9 @@ def test_should_use_environment_database_path(monkeypatch) -> None:
         assert db_path.exists()
 
 
-def test_should_use_default_path_when_no_env_var(monkeypatch) -> None:
+def test_should_use_default_path_when_no_env_var(monkeypatch, tmp_path: Path) -> None:
     """Test that default path is used when no environment variable is set."""
+    monkeypatch.setenv("HOME", str(tmp_path))
     monkeypatch.delenv("QUOTE_VAULT_DB_PATH", raising=False)
     monkeypatch.setenv("QUOTE_VAULT_AUTO_SEED", "false")
 

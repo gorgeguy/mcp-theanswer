@@ -2,7 +2,7 @@
 
 import logging
 import sys
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
@@ -13,6 +13,9 @@ from mcp_theanswer.mcp.prompts import register_prompts
 from mcp_theanswer.mcp.resources import register_resources
 from mcp_theanswer.mcp.tools import register_tools
 from mcp_theanswer.seed_data import seed_database
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 # Configure logging
 logging.basicConfig(

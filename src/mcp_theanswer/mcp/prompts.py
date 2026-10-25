@@ -1,9 +1,13 @@
 """MCP prompt implementations for Quote Vault."""
 
 import logging
+from typing import TYPE_CHECKING, Any
 
-from mcp.server import Server
+from mcp import types as mcp_types
 from mcp.types import GetPromptResult, Prompt, PromptArgument, PromptMessage, TextContent
+
+if TYPE_CHECKING:
+    from mcp.server import Server
 
 logger = logging.getLogger("quote-vault")
 
@@ -221,12 +225,19 @@ def register_prompts(server: Server) -> None:
         server: MCP server instance
     """
 
-    @server.list_prompts()
     async def list_prompts() -> list[Prompt]:
         """List all available prompts."""
         return await get_prompt_list()
 
-    @server.get_prompt()
     async def get_prompt(name: str, arguments: dict[str, str] | None = None) -> GetPromptResult:
         """Get a prompt by name with arguments."""
         return await get_prompt_content(name, arguments or {})
+
+    async def on_list_prompts(_ctx: Any, _params: mcp_types.PaginatedRequestParams):
+        return mcp_types.ListPromptsResult(prompts=await list_prompts())
+
+    async def on_get_prompt(_ctx: Any, params: mcp_types.GetPromptRequestParams):
+        return await get_prompt(params.name, params.arguments)
+
+    server.add_request_handler("prompts/list", mcp_types.PaginatedRequestParams, on_list_prompts)
+    server.add_request_handler("prompts/get", mcp_types.GetPromptRequestParams, on_get_prompt)

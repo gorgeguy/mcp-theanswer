@@ -1,9 +1,12 @@
 """Seed data with Douglas Adams quotes."""
 
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from mcp_theanswer.database.operations import add_quote
 from mcp_theanswer.database.schema import check_if_seeded
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 # Collection of Douglas Adams quotes with metadata
 SEED_QUOTES = [

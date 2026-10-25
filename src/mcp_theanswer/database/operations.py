@@ -2,9 +2,12 @@
 
 import random
 import sqlite3
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from mcp_theanswer.database.models import Quote
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 class QuoteNotFoundError(Exception):

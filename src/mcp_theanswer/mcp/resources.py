@@ -2,14 +2,12 @@
 
 import json
 import logging
-from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from urllib.parse import unquote
 
-from mcp.server import Server
+from mcp import types as mcp_types
 from mcp.types import Resource
 
-from mcp_theanswer.database.models import Quote
 from mcp_theanswer.database.operations import (
     get_all_quotes,
     get_quote_by_id,
@@ -17,6 +15,13 @@ from mcp_theanswer.database.operations import (
     list_all_tags,
     search_quotes,
 )
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from mcp.server import Server
+
+    from mcp_theanswer.database.models import Quote
 
 logger = logging.getLogger("quote-vault")
 
@@ -101,43 +106,43 @@ async def get_resource_list() -> list[Resource]:
             uri="quote://all",  # type: ignore[arg-type]
             name="All Quotes",
             description="Returns all quotes in the vault",
-            mimeType="application/json",
+            mime_type="application/json",
         ),
         Resource(
             uri="quote://id/{id}",  # type: ignore[arg-type]
             name="Quote by ID",
             description="Returns a specific quote by ID",
-            mimeType="application/json",
+            mime_type="application/json",
         ),
         Resource(
             uri="quote://author/{author}",  # type: ignore[arg-type]
             name="Quotes by Author",
             description="Returns all quotes by a specific author",
-            mimeType="application/json",
+            mime_type="application/json",
         ),
         Resource(
             uri="quote://tag/{tag}",  # type: ignore[arg-type]
             name="Quotes by Tag",
             description="Returns all quotes with a specific tag",
-            mimeType="application/json",
+            mime_type="application/json",
         ),
         Resource(
             uri="quote://random",  # type: ignore[arg-type]
             name="Random Quote",
             description="Returns a random quote from the collection",
-            mimeType="application/json",
+            mime_type="application/json",
         ),
         Resource(
             uri="quote://stats",  # type: ignore[arg-type]
             name="Collection Statistics",
             description="Returns statistics about the quote collection",
-            mimeType="application/json",
+            mime_type="application/json",
         ),
         Resource(
             uri="quote://tags",  # type: ignore[arg-type]
             name="All Tags",
             description="Returns all available tags with counts",
-            mimeType="application/json",
+            mime_type="application/json",
         ),
     ]
 
@@ -225,12 +230,31 @@ def register_resources(server: Server, db_path: Path) -> None:
         db_path: Path to the database file
     """
 
-    @server.list_resources()
     async def list_resources() -> list[Resource]:
         """List all available resources."""
         return await get_resource_list()
 
-    @server.read_resource()
     async def read_resource(uri: str) -> str:  # type: ignore[arg-type]
         """Read a resource by URI."""
         return await read_resource_content(uri, db_path)
+
+    async def on_list_resources(_ctx: Any, _params: mcp_types.PaginatedRequestParams):
+        return mcp_types.ListResourcesResult(resources=await list_resources())
+
+    async def on_read_resource(_ctx: Any, params: mcp_types.ReadResourceRequestParams):
+        return mcp_types.ReadResourceResult(
+            contents=[
+                mcp_types.TextResourceContents(
+                    uri=params.uri,
+                    mime_type="application/json",
+                    text=await read_resource(params.uri),
+                )
+            ]
+        )
+
+    server.add_request_handler(
+        "resources/list", mcp_types.PaginatedRequestParams, on_list_resources
+    )
+    server.add_request_handler(
+        "resources/read", mcp_types.ReadResourceRequestParams, on_read_resource
+    )

@@ -46,7 +46,7 @@ class Quote:
         }
 
     @classmethod
-    def from_row(cls, row: tuple[Any, ...], tags: list[str] | None = None) -> "Quote":
+    def from_row(cls, row: tuple[Any, ...], tags: list[str] | None = None) -> Quote:
         """
         Create a Quote from a database row.
 
@@ -97,7 +97,7 @@ class Tag:
         }
 
     @classmethod
-    def from_row(cls, row: tuple[Any, ...]) -> "Tag":
+    def from_row(cls, row: tuple[Any, ...]) -> Tag:
         """
         Create a Tag from a database row.
 

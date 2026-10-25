@@ -35,7 +35,7 @@ This server works with any MCP client, including [Claude Desktop](https://claude
 
 ## Installation
 
-This project requires Python 3.11+ and uses [uv](https://github.com/astral-sh/uv) for dependency management.
+This project requires Python 3.14.9 (3.14 series) and uses [uv](https://github.com/astral-sh/uv) for dependency management.
 
 ### Quick Install
 
